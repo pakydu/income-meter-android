@@ -1,7 +1,7 @@
-plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-}
+// App-level build.gradle (Groovy DSL - 兼容 Gitee Android 构建环境)
+
+apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace 'com.example.incomemeter'

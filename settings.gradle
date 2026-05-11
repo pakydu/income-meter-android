@@ -1,16 +1,13 @@
 pluginManagement {
     repositories {
+        maven { url 'https://maven.aliyun.com/google'}
+        maven { url 'https://maven.aliyun.com/public'}
+        maven { url 'https://maven.aliyun.com/gradle'}
         google()
         mavenCentral()
         gradlePluginPortal()
     }
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+
 rootProject.name = "IncomeMeter"
 include ':app'
