@@ -27,24 +27,13 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        run: |
-          cat gradlew | head -20
-          echo "---"
-          echo "Testing: sh -x gradlew clean"
-          sh -x gradlew clean 2>&1 | head -40
+        run: ./gradlew clean
 
       - name: Assemble APK
-        run: |
-          echo "Testing direct java call:"
-          java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain --version 2>&1
-          echo "=== assembleDebug ==="
-          java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain assembleDebug 2>&1 | tail -30
-        run: |
-          echo "=== 查找所有 APK 文件 ==="
-          find . -name "*.apk" -type f 2>/dev/null
-          echo "---"
-          echo "APK路径:"
-          find . -name "*.apk" -type f 2>/dev/null
+        run: ./gradlew assembleDebug
+
+      - name: Find APK files
+        run: find . -name "*.apk" -type f
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
