@@ -1,7 +1,25 @@
 <resources>
     <string name="app_name">收入显示器</string>
-    <string name="label_monthly_salary">月薪（元）</string>
-    <string name="hint_salary">输入月薪</string>
+
+    <!-- 菜单 -->
+    <string name="menu_settings">设置</string>
+    <string name="menu_about">关于</string>
+
+    <!-- 设置页面 -->
+    <string name="settings_title">设置</string>
+    <string name="settings_salary_title">月薪设置</string>
+    <string name="settings_salary_hint">输入月薪（元）</string>
+    <string name="settings_save">保存</string>
+    <string name="settings_saved">设置已保存</string>
+
+    <!-- 关于页面 -->
+    <string name="about_title">关于</string>
+    <string name="about_app_name">收入显示器</string>
+    <string name="about_version">版本 1.0.0</string>
+    <string name="about_author">作者：你的名字</string>
+    <string name="about_desc">一个帮助你实时查看收入的小工具</string>
+
+    <!-- 主页面 -->
     <string name="btn_start">开始计时</string>
     <string name="btn_pause">暂停</string>
     <string name="btn_resume">继续</string>
@@ -9,7 +27,7 @@
     <string name="status_running">计时中…</string>
     <string name="status_paused">已暂停</string>
     <string name="label_today_earned">今日已赚</string>
-    <string name="label_month_earned">本月累计（1日至今）</string>
+    <string name="label_month_earned">本月累计</string>
     <string name="month_progress_default">本月已过 0 天 / 22 个工作日</string>
     <string name="progress_default">今日工作进度 0.0%（9:00~18:00 工作制）</string>
     <string name="section_rate">实时收入速率</string>

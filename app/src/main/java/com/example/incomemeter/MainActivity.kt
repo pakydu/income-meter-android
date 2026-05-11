@@ -1,15 +1,18 @@
 package com.example.incomemeter
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Menu
+import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.example.incomemeter.databinding.ActivityMainBinding
 import java.text.NumberFormat
 import java.util.Calendar
@@ -18,6 +21,7 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var prefs: SharedPreferences
 
     // 计时状态
     private var isRunning = false
@@ -39,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     // 累计收入动画
     private var displayedMonthEarned = 0.0
-    private var monthAnimator: ValueAnimator? = null
+    private var monthAnimator: android.animation.ValueAnimator? = null
 
     // 数字格式化
     private val nfCny: NumberFormat = NumberFormat.getNumberInstance(Locale.CHINA).apply {
@@ -47,31 +51,64 @@ class MainActivity : AppCompatActivity() {
         maximumFractionDigits = 2
     }
 
+    companion object {
+        private const val PREFS_NAME = "income_meter_prefs"
+        private const val KEY_SALARY = "monthly_salary"
+        private const val DEFAULT_SALARY = 10000.0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // 初始化 SharedPreferences
+        prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+        // 设置 Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        // 从设置加载月薪
+        val savedSalary = prefs.getFloat(KEY_SALARY, DEFAULT_SALARY.toFloat())
+        monthlySalary = savedSalary.toDouble()
+
         // 初始化静态数据
-        updateStatic(10000.0)
+        updateStatic(monthlySalary)
 
         // 按钮点击
         binding.btnToggle.setOnClickListener {
             toggleTimer()
         }
+    }
 
-        // 输入框变化时刷新静态数据（未计时中）
-        binding.etSalary.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && !isRunning) {
-                val s = parseSalary()
-                if (s != null) updateStatic(s)
-            }
+    override fun onResume() {
+        super.onResume()
+        // 每次回到页面时刷新月薪（可能在设置页面修改了）
+        val savedSalary = prefs.getFloat(KEY_SALARY, DEFAULT_SALARY.toFloat())
+        if (!isRunning && savedSalary.toDouble() != monthlySalary) {
+            monthlySalary = savedSalary.toDouble()
+            updateStatic(monthlySalary)
         }
     }
 
-    private fun parseSalary(): Double? {
-        val raw = binding.etSalary.text?.toString()?.trim() ?: return null
-        return raw.toDoubleOrNull()?.takeIf { it > 0 }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            R.id.menu_about -> {
+                startActivity(Intent(this, AboutActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     /** 换算各时间单位收入速率 */
@@ -138,7 +175,7 @@ class MainActivity : AppCompatActivity() {
     private fun animateNumber(from: Double, to: Double) {
         monthAnimator?.cancel()
 
-        monthAnimator = ValueAnimator.ofFloat(from.toFloat(), to.toFloat()).apply {
+        monthAnimator = android.animation.ValueAnimator.ofFloat(from.toFloat(), to.toFloat()).apply {
             duration = 300
             interpolator = DecelerateInterpolator()
             addUpdateListener { animator ->
@@ -181,14 +218,6 @@ class MainActivity : AppCompatActivity() {
     private fun toggleTimer() {
         if (!isRunning) {
             // 启动
-            val s = parseSalary()
-            if (s == null) {
-                Toast.makeText(this, getString(R.string.error_invalid_salary), Toast.LENGTH_SHORT).show()
-                return
-            }
-            monthlySalary = s
-            updateStatic(s)
-
             isRunning = true
             sessionStartMs = System.currentTimeMillis()
 
