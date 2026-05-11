@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         updateMonthCumulative()
     }
 
-    /** 计算并显示本月累计收入（每10元更新一次） */
+    /** 计算并显示本月累计收入（每5元更新一次） */
     private fun updateMonthCumulative() {
         val rates = calcRates(monthlySalary)
         val perSecond = rates[4]
@@ -157,9 +157,9 @@ class MainActivity : AppCompatActivity() {
         // 本月累计 = 已完成工作日收入 + 今日已工作收入
         val newMonthEarned = (daysWorkedThisMonth - 1) * perDay + workedToday * perSecond
 
-        // 四舍五入到整数判断是否需要更新（每10元更新一次）
-        val newRounded = Math.floor(newMonthEarned / 10.0).toInt()
-        val currentRounded = Math.floor(displayedMonthEarned / 10.0).toInt()
+        // 四舍五入到整数判断是否需要更新（每5元更新一次）
+        val newRounded = Math.floor(newMonthEarned / 5.0).toInt()
+        val currentRounded = Math.floor(displayedMonthEarned / 5.0).toInt()
 
         if (newRounded != currentRounded || displayedMonthEarned == 0.0) {
             // 动画更新数字
