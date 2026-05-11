@@ -65,9 +65,10 @@ class MainActivity : AppCompatActivity() {
         // 初始化 SharedPreferences
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        // 设置 Toolbar
+        // 设置 Toolbar 标题居中
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
 
         // 从设置加载月薪
         val savedSalary = prefs.getFloat(KEY_SALARY, DEFAULT_SALARY.toFloat())
