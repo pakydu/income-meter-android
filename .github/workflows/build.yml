@@ -27,23 +27,21 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          ./gradlew clean
+          ./gradlew assembleDebug --info --stacktrace
 
       - name: Find APK files
-        id: find-apk
         run: |
           echo "=== 查找所有 APK 文件 ==="
           find . -name "*.apk" -type f 2>/dev/null
           echo "---"
           echo "APK路径:"
-          APK_PATH=$(find . -name "*.apk" -type f 2>/dev/null | head -1)
-          echo $APK_PATH
-          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+          find . -name "*.apk" -type f 2>/dev/null
 
       - name: Upload APK artifact
-        if: steps.find-apk.outputs.apk_path != ''
         uses: actions/upload-artifact@v4
         with:
           name: income-meter-debug-apk
-          path: ${{ steps.find-apk.outputs.apk_path }}
+          path: app/build/outputs/apk/debug/
           retention-days: 30
