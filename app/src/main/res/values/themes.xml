@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.IncomeMeter" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.IncomeMeter" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/accent_blue</item>
         <item name="colorPrimaryVariant">@color/accent_blue</item>
         <item name="colorOnPrimary">@color/white</item>
