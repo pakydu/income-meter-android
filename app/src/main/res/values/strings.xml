@@ -9,6 +9,8 @@
     <string name="status_running">计时中…</string>
     <string name="status_paused">已暂停</string>
     <string name="label_today_earned">今日已赚</string>
+    <string name="label_month_earned">本月累计（1日至今）</string>
+    <string name="month_progress_default">本月已过 0 天 / 22 个工作日</string>
     <string name="progress_default">今日工作进度 0.0%（9:00~18:00 工作制）</string>
     <string name="section_rate">实时收入速率</string>
     <string name="label_per_second">每秒收入</string>

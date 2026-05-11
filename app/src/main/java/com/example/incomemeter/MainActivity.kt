@@ -2,10 +2,12 @@ package com.example.incomemeter
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.incomemeter.databinding.ActivityMainBinding
@@ -34,6 +36,11 @@ class MainActivity : AppCompatActivity() {
 
     // 月薪（元）
     private var monthlySalary = 10000.0
+
+    // 累计收入动画
+    private var displayedMonthEarned = 0.0
+    private var targetMonthEarned = 0.0
+    private var monthAnimator: ValueAnimator? = null
 
     // 数字格式化
     private val nfCny: NumberFormat = NumberFormat.getNumberInstance(Locale.CHINA).apply {
@@ -86,6 +93,55 @@ class MainActivity : AppCompatActivity() {
         binding.tvPerHour.text = "¥${nfCny.format(rates[2])}"
         binding.tvMonthSalary.text = "¥${NumberFormat.getNumberInstance(Locale.CHINA).apply { maximumFractionDigits = 0 }.format(salary)}"
         binding.tvDaySalary.text = "¥${nfCny.format(rates[1])}"
+
+        // 更新本月累计
+        updateMonthCumulative()
+    }
+
+    /** 计算并显示本月累计收入（带动画） */
+    private fun updateMonthCumulative() {
+        val rates = calcRates(monthlySalary)
+        val perSecond = rates[4]
+        val perDay = rates[1]
+
+        val cal = Calendar.getInstance()
+
+        // 计算本月已过去的工作日天数（从1日开始）
+        val today = cal.get(Calendar.DAY_OF_MONTH)
+        val daysWorkedThisMonth = minOf(today, 22)  // 最多按22个工作日算
+
+        // 计算今日已工作时间（按 9:00~18:00 工作制）
+        val secondsIntoDay = cal.get(Calendar.HOUR_OF_DAY) * 3600 +
+                cal.get(Calendar.MINUTE) * 60 +
+                cal.get(Calendar.SECOND) +
+                cal.get(Calendar.MILLISECOND) / 1000.0
+        val workStart = 9 * 3600
+        val workDuration = 8 * 3600
+        val workedToday = maxOf(0.0, minOf(workDuration.toDouble(), secondsIntoDay - workStart))
+
+        // 本月累计 = 已完成工作日收入 + 今日已工作收入
+        targetMonthEarned = (daysWorkedThisMonth - 1) * perDay + workedToday * perSecond
+
+        // 动画更新数字
+        animateNumber(displayedMonthEarned, targetMonthEarned)
+
+        // 更新进度文字
+        binding.tvMonthProgress.text = "本月已过 $today 天 / 22 个工作日"
+    }
+
+    /** 数字动画效果 */
+    private fun animateNumber(from: Double, to: Double) {
+        monthAnimator?.cancel()
+
+        monthAnimator = ValueAnimator.ofFloat(from.toFloat(), to.toFloat()).apply {
+            duration = 300
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animator ->
+                displayedMonthEarned = (animator.animatedValue as Float).toDouble()
+                binding.tvMonthEarned.text = "¥${String.format("%.2f", displayedMonthEarned)}"
+            }
+            start()
+        }
     }
 
     /** 每帧刷新 */
@@ -110,8 +166,11 @@ class MainActivity : AppCompatActivity() {
         val pct = minOf(100.0, (workedToday / workDuration) * 100.0)
 
         binding.tvTodayEarned.text = "¥${String.format("%.6f", todayEarned)}"
-        binding.progressDay.progress = (pct * 100).toInt()   // max=10000
+        binding.progressDay.progress = (pct * 100).toInt()
         binding.tvDayProgress.text = "今日工作进度 ${String.format("%.1f", pct)}%（9:00~18:00 工作制）"
+
+        // 更新本月累计
+        updateMonthCumulative()
     }
 
     private fun toggleTimer() {
@@ -155,5 +214,6 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         isRunning = false
         handler.removeCallbacks(tickRunnable)
+        monthAnimator?.cancel()
     }
 }
