@@ -34,6 +34,7 @@
     <string name="label_per_second">每秒收入</string>
     <string name="label_per_minute">每分钟收入</string>
     <string name="label_per_hour">每小时收入</string>
+    <string name="label_per_day">日薪</string>
     <string name="label_session">本次计时已赚</string>
     <string name="section_breakdown">月收入拆解</string>
     <string name="label_month_salary">月薪</string>
