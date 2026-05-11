@@ -5,7 +5,7 @@ on:
     branches: [ "main", "master" ]
   pull_request:
     branches: [ "main", "master" ]
-  workflow_dispatch:   # 支持手动触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,22 +26,24 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
 
+      - name: Find APK files
+        id: find-apk
+        run: |
+          echo "=== 查找所有 APK 文件 ==="
+          find . -name "*.apk" -type f 2>/dev/null
+          echo "---"
+          echo "APK路径:"
+          APK_PATH=$(find . -name "*.apk" -type f 2>/dev/null | head -1)
+          echo $APK_PATH
+          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+
       - name: Upload APK artifact
+        if: steps.find-apk.outputs.apk_path != ''
         uses: actions/upload-artifact@v4
         with:
           name: income-meter-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: ${{ steps.find-apk.outputs.apk_path }}
           retention-days: 30
