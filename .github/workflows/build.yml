@@ -27,16 +27,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        run: |
-          echo "=== gradlew 文件行尾检查 ==="
-          file gradlew
-          head -1 gradlew | cat -A
-          echo "=== gradlew 前 30 行内容 ==="
-          head -30 gradlew | cat -A
-          echo "=== 直接用 bash 运行 gradlew tasks ==="
-          bash gradlew tasks --no-daemon 2>&1 | head -30
-          echo "=== 执行 assembleDebug ==="
-          bash gradlew assembleDebug --info --stacktrace --no-daemon 2>&1 | tail -50
+        run: sh gradlew clean
+      - name: Assemble APK
+        run: sh gradlew assembleDebug
 
       - name: Find APK files
         run: |
