@@ -1,0 +1,14 @@
+<resources>
+    <color name="bg_page">#F5F4F0</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_metric">#F0EFEA</color>
+    <color name="accent_blue">#185FA5</color>
+    <color name="accent_green">#639922</color>
+    <color name="text_primary">#2C2C2A</color>
+    <color name="text_secondary">#5F5E5A</color>
+    <color name="text_hint">#B4B2A9</color>
+    <color name="dot_stopped">#888780</color>
+    <color name="progress_track">#E0DFDB</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>
