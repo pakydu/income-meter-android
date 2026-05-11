@@ -128,7 +128,6 @@ class MainActivity : AppCompatActivity() {
         binding.tvPerMinute.text = "¥${String.format("%.4f", rates[3])}"
         binding.tvPerHour.text = "¥${nfCny.format(rates[2])}"
         binding.tvMonthSalary.text = "¥${NumberFormat.getNumberInstance(Locale.CHINA).apply { maximumFractionDigits = 0 }.format(salary)}"
-        binding.tvDaySalary.text = "¥${nfCny.format(rates[1])}"
 
         // 更新本月累计
         updateMonthCumulative()
