@@ -1,4 +1,10 @@
-// Top-level build file (Groovy DSL - 兼容 Gitee Android 构建环境)
+// Top-level build file (Groovy DSL)
+// 注意: plugins{} 块必须在最前面
+
+plugins {
+    id 'com.android.application' version '7.4.2' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.22' apply false
+}
 
 buildscript {
     repositories {
@@ -20,10 +26,4 @@ allprojects {
         google()
         mavenCentral()
     }
-}
-
-// 空 plugins 块避免冲突
-plugins {
-    id 'com.android.application' version '7.4.2' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.22' apply false
 }
